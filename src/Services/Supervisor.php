@@ -1,5 +1,6 @@
 <?php namespace professionalweb\IntegrationHub\Supervisor\Service;
 
+use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\EventData;
 use professionalweb\IntegrationHub\IntegrationHubDB\Models\Request;
 use professionalweb\IntegrationHub\IntegrationHubDB\Traits\UseFlowRepository;
 use professionalweb\IntegrationHub\IntegrationHubDB\Interfaces\Models\ProcessOptions;
@@ -49,5 +50,19 @@ class Supervisor implements ISupervisor
         }
 
         return $processOptions;
+    }
+
+    /**
+     * Update request status
+     *
+     * @param EventData $request
+     *
+     * @param string    $processId
+     *
+     * @return Request
+     */
+    public function processResponse(EventData $request, string $processId): Request
+    {
+        // TODO: Implement updateStatus() method.
     }
 }
