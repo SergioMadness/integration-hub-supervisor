@@ -1,13 +1,13 @@
 <?php namespace professionalweb\IntegrationHub\Supervisor\Service;
 
-use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\EventData;
 use professionalweb\IntegrationHub\IntegrationHubDB\Models\Request;
+use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\EventData;
 use professionalweb\IntegrationHub\IntegrationHubDB\Traits\UseFlowRepository;
-use professionalweb\IntegrationHub\IntegrationHubDB\Interfaces\Models\ProcessOptions;
+use professionalweb\IntegrationHub\Supervisor\Exceptions\WrongProcessPathException;
 use professionalweb\IntegrationHub\IntegrationHubDB\Traits\UseProcessOptionsRepository;
+use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\Models\ProcessOptions;
 use professionalweb\IntegrationHub\IntegrationHubDB\Interfaces\Repositories\FlowRepository;
 use professionalweb\IntegrationHub\Supervisor\Interfaces\Services\Supervisor as ISupervisor;
-use professionalweb\IntegrationHub\Supervisor\Exceptions\WrongProcessPathException;
 use professionalweb\IntegrationHub\IntegrationHubDB\Interfaces\Repositories\ProcessOptionsRepository;
 
 /**

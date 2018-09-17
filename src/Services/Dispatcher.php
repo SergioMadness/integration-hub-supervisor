@@ -1,11 +1,11 @@
 <?php namespace professionalweb\IntegrationHub\Supervisor\Service;
 
 use Illuminate\Foundation\Bus\DispatchesJobs;
-use professionalweb\IntegrationHub\IntegrationHubCommon\Jobs\NewEvent;
 use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\EventData;
 use professionalweb\IntegrationHub\IntegrationHubCommon\Events\EventToProcess;
-use professionalweb\IntegrationHub\IntegrationHubDB\Interfaces\Models\ProcessOptions;
+use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\Models\ProcessOptions;
 use professionalweb\IntegrationHub\Supervisor\Interfaces\Services\Dispatcher as IDispatcher;
+use professionalweb\IntegrationHub\IntegrationHubCommon\Jobs\EventToProcess as EventToProcessJob;
 
 /**
  * Service that send event data to next step.
@@ -61,7 +61,7 @@ class Dispatcher implements IDispatcher
     protected function toQueue(EventData $event, ProcessOptions $processOptions): void
     {
         $this->dispatchToQueue(
-            (new NewEvent($event, $processOptions))->onQueue($processOptions->getQueue())
+            (new EventToProcessJob($event, $processOptions))->onQueue($processOptions->getQueue())
         );
     }
 
