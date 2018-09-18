@@ -3,11 +3,13 @@
 use professionalweb\IntegrationHub\IntegrationHubDB\Models\Request;
 use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\EventData;
 use professionalweb\IntegrationHub\IntegrationHubDB\Traits\UseFlowRepository;
+use professionalweb\IntegrationHub\IntegrationHubDB\Traits\UseRequestRepository;
 use professionalweb\IntegrationHub\Supervisor\Exceptions\WrongProcessPathException;
 use professionalweb\IntegrationHub\IntegrationHubDB\Traits\UseProcessOptionsRepository;
 use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\Models\ProcessOptions;
 use professionalweb\IntegrationHub\IntegrationHubDB\Interfaces\Repositories\FlowRepository;
 use professionalweb\IntegrationHub\Supervisor\Interfaces\Services\Supervisor as ISupervisor;
+use professionalweb\IntegrationHub\IntegrationHubDB\Interfaces\Repositories\RequestRepository;
 use professionalweb\IntegrationHub\IntegrationHubDB\Interfaces\Repositories\ProcessOptionsRepository;
 
 /**
@@ -16,12 +18,14 @@ use professionalweb\IntegrationHub\IntegrationHubDB\Interfaces\Repositories\Proc
  */
 class Supervisor implements ISupervisor
 {
-    use UseFlowRepository, UseProcessOptionsRepository;
+    use UseFlowRepository, UseProcessOptionsRepository, UseRequestRepository;
 
-    public function __construct(FlowRepository $flowRepository, ProcessOptionsRepository $processOptionsRepository)
+    public function __construct(FlowRepository $flowRepository, ProcessOptionsRepository $processOptionsRepository, RequestRepository $requestRepository)
     {
-        $this->setFlowRepository($flowRepository)
-            ->setProcessOptionsRepository($processOptionsRepository);
+        $this
+            ->setFlowRepository($flowRepository)
+            ->setProcessOptionsRepository($processOptionsRepository)
+            ->setRequestRepository($requestRepository);
     }
 
     /**
@@ -49,6 +53,10 @@ class Supervisor implements ISupervisor
             $processOptions = $this->getProcessOptionsRepository()->model($nextStep);
         }
 
+        $this->getRequestRepository()->save(
+            $request->setCurrentStep($flow->id, '')
+        );
+
         return $processOptions;
     }
 
@@ -63,6 +71,14 @@ class Supervisor implements ISupervisor
      */
     public function processResponse(EventData $request, string $processId): Request
     {
-        // TODO: Implement updateStatus() method.
+        $requestRepository = $this->getRequestRepository();
+        /** @var Request $requestModel */
+        $requestModel = $requestRepository->model($request->getId());
+
+        $requestModel->setCurrentStep($requestModel->getCurrentFlow(), $processId);
+
+        $requestRepository->save($requestModel);
+
+        return $requestModel;
     }
 }

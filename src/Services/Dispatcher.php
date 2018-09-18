@@ -1,8 +1,10 @@
 <?php namespace professionalweb\IntegrationHub\Supervisor\Service;
 
+use Illuminate\Support\Arr;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\EventData;
 use professionalweb\IntegrationHub\IntegrationHubCommon\Events\EventToProcess;
+use professionalweb\IntegrationHub\IntegrationHubCommon\Events\EventToSupervisor;
 use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\Models\ProcessOptions;
 use professionalweb\IntegrationHub\Supervisor\Interfaces\Services\Dispatcher as IDispatcher;
 use professionalweb\IntegrationHub\IntegrationHubCommon\Jobs\EventToProcess as EventToProcessJob;
@@ -73,6 +75,7 @@ class Dispatcher implements IDispatcher
      */
     protected function sendEvent(EventData $event, ProcessOptions $processOptions): void
     {
-        event(new EventToProcess($event, $processOptions));
+        $result = event(new EventToProcess($event, $processOptions));
+        event(new EventToSupervisor(Arr::last($result), $processOptions->getSubsystemId()));
     }
 }
