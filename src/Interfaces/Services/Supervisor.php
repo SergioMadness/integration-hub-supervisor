@@ -22,11 +22,12 @@ interface Supervisor
     /**
      * Update request status
      *
-     * @param EventData $request
-     *
-     * @param string    $processId
+     * @param EventData  $request
+     * @param string     $processId
+     * @param bool       $processSucceed
+     * @param null|mixed $processResponse
      *
      * @return Request
      */
-    public function processResponse(EventData $request, string $processId): Request;
+    public function processResponse(EventData $request, string $processId, $processSucceed = true, $processResponse = null): Request;
 }

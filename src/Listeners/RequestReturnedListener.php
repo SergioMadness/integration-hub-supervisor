@@ -23,7 +23,7 @@ class RequestReturnedListener
      */
     public function handle(EventToSupervisor $event): void
     {
-        event(new NewRequest($this->getSupervisor()->processResponse($event->eventData, $event->processId)));
+        event(new NewRequest($this->getSupervisor()->processResponse($event->eventData, $event->processId, $event->succeed, $event->processResponse)));
     }
 
     /**

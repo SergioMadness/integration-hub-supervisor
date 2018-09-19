@@ -75,7 +75,15 @@ class Dispatcher implements IDispatcher
      */
     protected function sendEvent(EventData $event, ProcessOptions $processOptions): void
     {
-        $result = event(new EventToProcess($event, $processOptions));
-        event(new EventToSupervisor(Arr::last($result), $processOptions->getSubsystemId()));
+        $succeed = true;
+        $response = null;
+        try {
+            $result = event(new EventToProcess($event, $processOptions));
+        } catch (\Exception $ex) {
+            $succeed = false;
+            $response = $ex->getMessage();
+            $result = [$event];
+        }
+        event(new EventToSupervisor(Arr::last($result), $processOptions->getSubsystemId(), $succeed, $response));
     }
 }
