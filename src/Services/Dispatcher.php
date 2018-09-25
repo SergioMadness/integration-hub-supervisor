@@ -7,6 +7,7 @@ use professionalweb\IntegrationHub\IntegrationHubCommon\Events\EventToProcess;
 use professionalweb\IntegrationHub\IntegrationHubCommon\Events\EventToSupervisor;
 use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\Models\ProcessOptions;
 use professionalweb\IntegrationHub\Supervisor\Interfaces\Services\Dispatcher as IDispatcher;
+use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\Exceptions\ArrayException;
 use professionalweb\IntegrationHub\IntegrationHubCommon\Jobs\EventToProcess as EventToProcessJob;
 
 /**
@@ -79,6 +80,10 @@ class Dispatcher implements IDispatcher
         $response = null;
         try {
             $result = event(new EventToProcess($event, $processOptions));
+        } catch (ArrayException $ex) {
+            $succeed = false;
+            $response = $ex->getMessages();
+            $result = [$event];
         } catch (\Exception $ex) {
             $succeed = false;
             $response = $ex->getMessage();

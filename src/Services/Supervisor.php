@@ -111,7 +111,8 @@ class Supervisor implements ISupervisor
         );
         $requestModel
             ->setCurrentStep($requestModel->getCurrentFlow(), $processId)
-            ->setProcessResponse($processId, $processResponse, $processSucceed);
+            ->setProcessResponse($processId, $processResponse, $processSucceed)
+            ->setData($request->getData());
 
         $requestRepository->save($requestModel);
 
