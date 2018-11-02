@@ -91,6 +91,6 @@ class Dispatcher implements IDispatcher
         }
         event(new EventToSupervisor(Arr::last(Arr::where($result, function ($item) {
             return $item !== null;
-        })), $processOptions->getSubsystemId(), $succeed, $response));
+        })), $processOptions->getId(), $succeed, $response));
     }
 }
