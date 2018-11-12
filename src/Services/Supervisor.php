@@ -102,17 +102,12 @@ class Supervisor implements ISupervisor
         /** @var Request $requestModel */
         $requestModel = $requestRepository->model($request->getId());
 
-        /** @var ProcessOptions $processOptions */
-        $processOptions = $this->getProcessOptionsRepository()->model($processId);
-
-        $data = $this->getMapper()->map(array_flip($processOptions->getMapping()), $request->getData());
-        $request->setData(
-            array_merge($request->getData(), $data)
-        );
+        $data = $request->getData();
+        $data[$processId] = $request->getData();
         $requestModel
             ->setCurrentStep($requestModel->getCurrentFlow(), $processId)
             ->setProcessResponse($processId, $processResponse, $processSucceed)
-            ->setData($request->getData());
+            ->setData($data);
 
         $requestRepository->save($requestModel);
 
