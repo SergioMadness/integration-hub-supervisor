@@ -42,13 +42,11 @@ class EventProcessor implements RequestProcessor
     public function event(Request $event): RequestProcessor
     {
         if (($nextProcess = $this->getSupervisor()->nextProcess($event)) !== null) {
-            $mapped = $event->getData();
+            $mapped = [];
             if (!empty($map = $nextProcess->getMapping())) {
-                $mapped = $this->getFieldMapper()->map($map, $mapped);
+                $mapped = $this->getFieldMapper()->map($map, $event->getData());
             }
-            $event->setData(
-                array_intersect_key($mapped, array_flip($map))
-            );
+            $event->setData($mapped);
             $this->getDispatcher()->dispatch($event, $nextProcess);
         }
 
