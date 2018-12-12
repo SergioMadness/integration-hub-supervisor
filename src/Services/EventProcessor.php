@@ -1,8 +1,8 @@
 <?php namespace professionalweb\IntegrationHub\Supervisor\Service;
 
-use professionalweb\IntegrationHub\IntegrationHubDB\Models\Request;
 use professionalweb\IntegrationHub\Supervisor\Interfaces\Services\Dispatcher;
 use professionalweb\IntegrationHub\Supervisor\Interfaces\Services\Supervisor;
+use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\Models\Request;
 use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\Services\FieldMapper;
 use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\Services\RequestProcessor;
 
