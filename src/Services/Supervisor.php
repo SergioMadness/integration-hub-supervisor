@@ -93,9 +93,9 @@ class Supervisor implements ISupervisor
      *
      * @param ProcessResponse $response
      *
-     * @return Request
+     * @return EventData
      */
-    public function processResponse(ProcessResponse $response): Request
+    public function processResponse(ProcessResponse $response): EventData
     {
         $request = $response->getEventData();
         $requestRepository = $this->getRequestRepository();
