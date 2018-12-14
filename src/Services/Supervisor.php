@@ -76,6 +76,7 @@ class Supervisor implements ISupervisor
         }
 
         if ($nextStep !== null) {
+            $request->setStatus(EventData::STATUS_QUEUE);
             $processOptions = $this->getProcessOptionsRepository()->model($nextStep);
         } else {
             $request->setStatus(EventData::STATUS_SUCCESS);
