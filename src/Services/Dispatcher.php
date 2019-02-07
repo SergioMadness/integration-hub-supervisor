@@ -4,6 +4,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\EventData;
 use professionalweb\IntegrationHub\IntegrationHubCommon\Events\EventToProcess;
+use professionalweb\IntegrationHub\IntegrationHubCommon\Models\ProcessResponse;
 use professionalweb\IntegrationHub\IntegrationHubCommon\Events\EventToSupervisor;
 use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\Models\ProcessOptions;
 use professionalweb\IntegrationHub\Supervisor\Interfaces\Services\Dispatcher as IDispatcher;
@@ -89,8 +90,15 @@ class Dispatcher implements IDispatcher
             $response = $ex->getMessage();
             $result = [$event];
         }
-        event(new EventToSupervisor(Arr::last(Arr::where($result, function ($item) {
-            return $item !== null;
-        })), $processOptions->getId(), $succeed, $response));
+        event(new EventToSupervisor(
+            new ProcessResponse(
+                Arr::last(Arr::where($result, function ($item) {
+                    return $item !== null;
+                })),
+                $processOptions->getId(),
+                $succeed,
+                $response
+            )
+        ));
     }
 }

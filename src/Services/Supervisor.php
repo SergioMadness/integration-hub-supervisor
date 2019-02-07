@@ -1,18 +1,18 @@
 <?php namespace professionalweb\IntegrationHub\Supervisor\Service;
 
-use professionalweb\IntegrationHub\IntegrationHubDB\Models\Request;
 use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\EventData;
-use professionalweb\IntegrationHub\IntegrationHubDB\Traits\UseFlowRepository;
-use professionalweb\IntegrationHub\IntegrationHubDB\Traits\UseRequestRepository;
+use professionalweb\IntegrationHub\IntegrationHubCommon\Traits\UseFlowRepository;
+use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\ProcessResponse;
 use professionalweb\IntegrationHub\Supervisor\Exceptions\WrongProcessPathException;
 use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\Services\Filter;
-use professionalweb\IntegrationHub\IntegrationHubDB\Traits\UseProcessOptionsRepository;
+use professionalweb\IntegrationHub\IntegrationHubCommon\Traits\UseRequestRepository;
 use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\Services\FieldMapper;
 use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\Models\ProcessOptions;
-use professionalweb\IntegrationHub\IntegrationHubDB\Interfaces\Repositories\FlowRepository;
+use professionalweb\IntegrationHub\IntegrationHubCommon\Traits\UseProcessOptionsRepository;
 use professionalweb\IntegrationHub\Supervisor\Interfaces\Services\Supervisor as ISupervisor;
-use professionalweb\IntegrationHub\IntegrationHubDB\Interfaces\Repositories\RequestRepository;
-use professionalweb\IntegrationHub\IntegrationHubDB\Interfaces\Repositories\ProcessOptionsRepository;
+use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\Repositories\FlowRepository;
+use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\Repositories\RequestRepository;
+use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\Repositories\ProcessOptionsRepository;
 
 /**
  * Service that resolve next step of processing
@@ -49,12 +49,12 @@ class Supervisor implements ISupervisor
     /**
      * Add/update event
      *
-     * @param Request $request
+     * @param EventData $request
      *
      * @return null|ProcessOptions
      * @throws \Exception
      */
-    public function nextProcess(Request $request): ?ProcessOptions
+    public function nextProcess(EventData $request): ?ProcessOptions
     {
         $flowRepository = $this->getFlowRepository();
         $currentFlow = $request->getCurrentFlow();
@@ -76,9 +76,10 @@ class Supervisor implements ISupervisor
         }
 
         if ($nextStep !== null) {
+            $request->setStatus(EventData::STATUS_QUEUE);
             $processOptions = $this->getProcessOptionsRepository()->model($nextStep);
         } else {
-            $request->setStatus(Request::STATUS_SUCCESS);
+            $request->setStatus(EventData::STATUS_SUCCESS);
         }
 
         $this->getRequestRepository()->save(
@@ -91,28 +92,27 @@ class Supervisor implements ISupervisor
     /**
      * Update request status
      *
-     * @param EventData  $request
-     * @param string     $processId
-     * @param bool       $processSucceed
-     * @param null|mixed $processResponse
+     * @param ProcessResponse $response
      *
-     * @return Request
+     * @return EventData
      */
-    public function processResponse(EventData $request, string $processId, $processSucceed = true, $processResponse = null): Request
+    public function processResponse(ProcessResponse $response): EventData
     {
+        $request = $response->getEventData();
         $requestRepository = $this->getRequestRepository();
-        /** @var Request $requestModel */
+        /** @var EventData $requestModel */
         $requestModel = $requestRepository->model($request->getId());
 
         $data = $requestModel->getData();
+        $processId = $response->getProcessId();
         $data[$processId] = $request->getData();
         $requestModel
             ->setCurrentStep($requestModel->getCurrentFlow(), $processId)
-            ->setProcessResponse($processId, $processResponse, $processSucceed)
+            ->setProcessResponse($processId, $response->getProcessResponse(), $response->isSucceed())
             ->setData($data)
             ->incAttempts();
-        if (!$processSucceed) {
-            $requestModel->setStatus(Request::STATUS_RETRY);
+        if (!$response->isSucceed()) {
+            $requestModel->setStatus(EventData::STATUS_RETRY);
         }
 
         $requestRepository->save($requestModel);

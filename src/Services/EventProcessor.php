@@ -1,8 +1,8 @@
 <?php namespace professionalweb\IntegrationHub\Supervisor\Service;
 
-use professionalweb\IntegrationHub\IntegrationHubDB\Models\Request;
 use professionalweb\IntegrationHub\Supervisor\Interfaces\Services\Dispatcher;
 use professionalweb\IntegrationHub\Supervisor\Interfaces\Services\Supervisor;
+use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\EventData;
 use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\Services\FieldMapper;
 use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\Services\RequestProcessor;
 
@@ -35,11 +35,11 @@ class EventProcessor implements RequestProcessor
     /**
      * Process event
      *
-     * @param Request $event
+     * @param EventData $event
      *
      * @return RequestProcessor
      */
-    public function event(Request $event): RequestProcessor
+    public function event(EventData $event): RequestProcessor
     {
         if (($nextProcess = $this->getSupervisor()->nextProcess($event)) !== null) {
             $mapped = [];
