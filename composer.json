@@ -14,7 +14,7 @@
   "prefer-stable": true,
   "require": {
     "php": ">=7.1.3",
-    "professionalweb/integration-hub-common": "dev-refactoring"
+    "professionalweb/integration-hub-common": "dev-develop"
   },
   "require-dev": {
   },
