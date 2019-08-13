@@ -1,11 +1,15 @@
 <?php namespace professionalweb\IntegrationHub\Supervisor\Service;
 
+use Illuminate\Support\Arr;
 use Illuminate\Foundation\Bus\DispatchesJobs;
-use professionalweb\IntegrationHub\IntegrationHubCommon\Jobs\NewEvent;
 use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\EventData;
 use professionalweb\IntegrationHub\IntegrationHubCommon\Events\EventToProcess;
-use professionalweb\IntegrationHub\IntegrationHubDB\Interfaces\Models\ProcessOptions;
+use professionalweb\IntegrationHub\IntegrationHubCommon\Models\ProcessResponse;
+use professionalweb\IntegrationHub\IntegrationHubCommon\Events\EventToSupervisor;
+use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\Models\ProcessOptions;
 use professionalweb\IntegrationHub\Supervisor\Interfaces\Services\Dispatcher as IDispatcher;
+use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\Exceptions\ArrayException;
+use professionalweb\IntegrationHub\IntegrationHubCommon\Jobs\EventToProcess as EventToProcessJob;
 
 /**
  * Service that send event data to next step.
@@ -61,7 +65,7 @@ class Dispatcher implements IDispatcher
     protected function toQueue(EventData $event, ProcessOptions $processOptions): void
     {
         $this->dispatchToQueue(
-            (new NewEvent($event, $processOptions))->onQueue($processOptions->getQueue())
+            (new EventToProcessJob($event, $processOptions))->onQueue($processOptions->getQueue())
         );
     }
 
@@ -73,6 +77,28 @@ class Dispatcher implements IDispatcher
      */
     protected function sendEvent(EventData $event, ProcessOptions $processOptions): void
     {
-        event(new EventToProcess($event, $processOptions));
+        $succeed = true;
+        $response = null;
+        try {
+            $result = event(new EventToProcess($event, $processOptions));
+        } catch (ArrayException $ex) {
+            $succeed = false;
+            $response = $ex->getMessages();
+            $result = [$event];
+        } catch (\Exception $ex) {
+            $succeed = false;
+            $response = $ex->getMessage();
+            $result = [$event];
+        }
+        event(new EventToSupervisor(
+            new ProcessResponse(
+                Arr::last(Arr::where($result, function ($item) {
+                    return $item !== null;
+                })),
+                $processOptions->getId(),
+                $succeed,
+                $response
+            )
+        ));
     }
 }

@@ -7,13 +7,48 @@ use professionalweb\IntegrationHub\IntegrationHubCommon\Events\EventToSupervisor
 class RequestReturnedListener
 {
     /**
+     * @var Supervisor
+     */
+    private $supervisor;
+
+    public function __construct(Supervisor $supervisor)
+    {
+        $this->setSupervisor($supervisor);
+    }
+
+    /**
      * Update event status end send it further
      *
      * @param EventToSupervisor $event
-     * @param Supervisor        $supervisor
      */
-    public function handler(EventToSupervisor $event, Supervisor $supervisor): void
+    public function handle(EventToSupervisor $event): void
     {
-        event(new NewRequest($supervisor->processResponse($event->eventData, $event->processId)));
+        event(
+            new NewRequest(
+                $this->getSupervisor()->processResponse(
+                    $event->getProcessResponse()
+                )
+            )
+        );
+    }
+
+    /**
+     * @return Supervisor
+     */
+    public function getSupervisor(): Supervisor
+    {
+        return $this->supervisor;
+    }
+
+    /**
+     * @param Supervisor $supervisor
+     *
+     * @return $this
+     */
+    public function setSupervisor(Supervisor $supervisor): self
+    {
+        $this->supervisor = $supervisor;
+
+        return $this;
     }
 }

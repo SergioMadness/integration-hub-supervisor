@@ -1,8 +1,8 @@
 <?php namespace professionalweb\IntegrationHub\Supervisor\Interfaces\Services;
 
-use professionalweb\IntegrationHub\IntegrationHubDB\Models\Request;
 use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\EventData;
-use professionalweb\IntegrationHub\IntegrationHubDB\Interfaces\Models\ProcessOptions;
+use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\ProcessResponse;
+use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\Models\ProcessOptions;
 
 /**
  * Interface for event supervisor
@@ -13,20 +13,18 @@ interface Supervisor
     /**
      * Add/update event
      *
-     * @param Request $request
+     * @param EventData $request
      *
      * @return ProcessOptions
      */
-    public function nextProcess(Request $request): ?ProcessOptions;
+    public function nextProcess(EventData $request): ?ProcessOptions;
 
     /**
      * Update request status
      *
-     * @param EventData $request
+     * @param ProcessResponse $response
      *
-     * @param string    $processId
-     *
-     * @return Request
+     * @return EventData
      */
-    public function processResponse(EventData $request, string $processId): Request;
+    public function processResponse(ProcessResponse $response): EventData;
 }

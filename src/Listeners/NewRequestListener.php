@@ -5,8 +5,38 @@ use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\Services\Requ
 
 class NewRequestListener
 {
-    public function handler(NewRequest $event, RequestProcessor $requestProcessor): void
+    /**
+     * @var RequestProcessor
+     */
+    private $requestProcessor;
+
+    public function __construct(RequestProcessor $requestProcessor)
     {
-        $requestProcessor->event($event->request);
+        $this->setRequestProcessor($requestProcessor);
+    }
+
+    public function handle(NewRequest $event): void
+    {
+        $this->getRequestProcessor()->event($event->request);
+    }
+
+    /**
+     * @return RequestProcessor
+     */
+    public function getRequestProcessor(): RequestProcessor
+    {
+        return $this->requestProcessor;
+    }
+
+    /**
+     * @param RequestProcessor $requestProcessor
+     *
+     * @return $this
+     */
+    public function setRequestProcessor(RequestProcessor $requestProcessor): self
+    {
+        $this->requestProcessor = $requestProcessor;
+
+        return $this;
     }
 }

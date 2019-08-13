@@ -1,7 +1,7 @@
 <?php namespace professionalweb\IntegrationHub\Supervisor\Interfaces\Services;
 
 use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\EventData;
-use professionalweb\IntegrationHub\IntegrationHubDB\Interfaces\Models\ProcessOptions;
+use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\Models\ProcessOptions;
 
 /**
  * Interface for process dispatcher

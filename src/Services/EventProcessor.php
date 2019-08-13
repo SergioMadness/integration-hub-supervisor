@@ -1,8 +1,9 @@
 <?php namespace professionalweb\IntegrationHub\Supervisor\Service;
 
-use professionalweb\IntegrationHub\IntegrationHubDB\Models\Request;
 use professionalweb\IntegrationHub\Supervisor\Interfaces\Services\Dispatcher;
 use professionalweb\IntegrationHub\Supervisor\Interfaces\Services\Supervisor;
+use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\EventData;
+use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\Services\FieldMapper;
 use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\Services\RequestProcessor;
 
 /**
@@ -21,21 +22,33 @@ class EventProcessor implements RequestProcessor
      */
     private $supervisor;
 
-    public function __construct(Dispatcher $dispatcher, Supervisor $supervisor)
+    /**
+     * @var FieldMapper
+     */
+    private $fieldMapper;
+
+    public function __construct(Dispatcher $dispatcher, Supervisor $supervisor, FieldMapper $fieldMapper)
     {
-        $this->setDispatcher($dispatcher)->setSupervisor($supervisor);
+        $this->setDispatcher($dispatcher)->setSupervisor($supervisor)->setFieldMapper($fieldMapper);
     }
 
     /**
      * Process event
      *
-     * @param Request $event
+     * @param EventData $event
      *
      * @return RequestProcessor
      */
-    public function event(Request $event): RequestProcessor
+    public function event(EventData $event): RequestProcessor
     {
-        $this->getDispatcher()->dispatch($event, $this->getSupervisor()->nextProcess($event));
+        if (($nextProcess = $this->getSupervisor()->nextProcess($event)) !== null) {
+            $mapped = [];
+            if (!empty($map = $nextProcess->getMapping())) {
+                $mapped = $this->getFieldMapper()->map($map, $event->getData());
+            }
+            $event->setData($mapped);
+            $this->getDispatcher()->dispatch($event, $nextProcess);
+        }
 
         return $this;
     }
@@ -76,6 +89,26 @@ class EventProcessor implements RequestProcessor
     public function setSupervisor(Supervisor $supervisor): self
     {
         $this->supervisor = $supervisor;
+
+        return $this;
+    }
+
+    /**
+     * @return FieldMapper
+     */
+    public function getFieldMapper(): FieldMapper
+    {
+        return $this->fieldMapper;
+    }
+
+    /**
+     * @param FieldMapper $fieldMapper
+     *
+     * @return $this
+     */
+    public function setFieldMapper(FieldMapper $fieldMapper): self
+    {
+        $this->fieldMapper = $fieldMapper;
 
         return $this;
     }

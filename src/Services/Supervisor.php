@@ -1,14 +1,18 @@
 <?php namespace professionalweb\IntegrationHub\Supervisor\Service;
 
 use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\EventData;
-use professionalweb\IntegrationHub\IntegrationHubDB\Models\Request;
-use professionalweb\IntegrationHub\IntegrationHubDB\Traits\UseFlowRepository;
-use professionalweb\IntegrationHub\IntegrationHubDB\Interfaces\Models\ProcessOptions;
-use professionalweb\IntegrationHub\IntegrationHubDB\Traits\UseProcessOptionsRepository;
-use professionalweb\IntegrationHub\IntegrationHubDB\Interfaces\Repositories\FlowRepository;
-use professionalweb\IntegrationHub\Supervisor\Interfaces\Services\Supervisor as ISupervisor;
+use professionalweb\IntegrationHub\IntegrationHubCommon\Traits\UseFlowRepository;
+use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\ProcessResponse;
 use professionalweb\IntegrationHub\Supervisor\Exceptions\WrongProcessPathException;
-use professionalweb\IntegrationHub\IntegrationHubDB\Interfaces\Repositories\ProcessOptionsRepository;
+use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\Services\Filter;
+use professionalweb\IntegrationHub\IntegrationHubCommon\Traits\UseRequestRepository;
+use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\Services\FieldMapper;
+use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\Models\ProcessOptions;
+use professionalweb\IntegrationHub\IntegrationHubCommon\Traits\UseProcessOptionsRepository;
+use professionalweb\IntegrationHub\Supervisor\Interfaces\Services\Supervisor as ISupervisor;
+use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\Repositories\FlowRepository;
+use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\Repositories\RequestRepository;
+use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\Repositories\ProcessOptionsRepository;
 
 /**
  * Service that resolve next step of processing
@@ -16,23 +20,41 @@ use professionalweb\IntegrationHub\IntegrationHubDB\Interfaces\Repositories\Proc
  */
 class Supervisor implements ISupervisor
 {
-    use UseFlowRepository, UseProcessOptionsRepository;
+    use UseFlowRepository, UseProcessOptionsRepository, UseRequestRepository;
 
-    public function __construct(FlowRepository $flowRepository, ProcessOptionsRepository $processOptionsRepository)
+    /**
+     * @var Filter
+     */
+    private $filter;
+
+    /**
+     * @var FieldMapper
+     */
+    private $mapper;
+
+    public function __construct(FlowRepository $flowRepository,
+                                ProcessOptionsRepository $processOptionsRepository,
+                                RequestRepository $requestRepository,
+                                Filter $filter,
+                                FieldMapper $mapper)
     {
-        $this->setFlowRepository($flowRepository)
-            ->setProcessOptionsRepository($processOptionsRepository);
+        $this
+            ->setFlowRepository($flowRepository)
+            ->setProcessOptionsRepository($processOptionsRepository)
+            ->setRequestRepository($requestRepository)
+            ->setFilter($filter)
+            ->setMapper($mapper);
     }
 
     /**
      * Add/update event
      *
-     * @param Request $request
+     * @param EventData $request
      *
      * @return null|ProcessOptions
      * @throws \Exception
      */
-    public function nextProcess(Request $request): ?ProcessOptions
+    public function nextProcess(EventData $request): ?ProcessOptions
     {
         $flowRepository = $this->getFlowRepository();
         $currentFlow = $request->getCurrentFlow();
@@ -45,9 +67,24 @@ class Supervisor implements ISupervisor
             throw new WrongProcessPathException();
         }
         $processOptions = null;
-        if (($nextStep = $flow->getNext($request->getCurrentStep())) !== null) {
-            $processOptions = $this->getProcessOptionsRepository()->model($nextStep);
+        $currentStep = $request->getCurrentStep();
+        $nextStep = null;
+        if ($flow->isConditional($currentStep)) {
+            $nextStep = array_first($this->getFilter()->filter($flow->getCondition($currentStep), $request->getData()));
+        } else {
+            $nextStep = $flow->getNext($currentStep);
         }
+
+        if ($nextStep !== null) {
+            $request->setStatus(EventData::STATUS_QUEUE);
+            $processOptions = $this->getProcessOptionsRepository()->model($nextStep);
+        } else {
+            $request->setStatus(EventData::STATUS_SUCCESS);
+        }
+
+        $this->getRequestRepository()->save(
+            $request->setCurrentStep($flow->id, $currentStep)
+        );
 
         return $processOptions;
     }
@@ -55,14 +92,74 @@ class Supervisor implements ISupervisor
     /**
      * Update request status
      *
-     * @param EventData $request
+     * @param ProcessResponse $response
      *
-     * @param string    $processId
-     *
-     * @return Request
+     * @return EventData
      */
-    public function processResponse(EventData $request, string $processId): Request
+    public function processResponse(ProcessResponse $response): EventData
     {
-        // TODO: Implement updateStatus() method.
+        $request = $response->getEventData();
+        $requestRepository = $this->getRequestRepository();
+        /** @var EventData $requestModel */
+        $requestModel = $requestRepository->model($request->getId());
+
+        $data = $requestModel->getData();
+        $processId = $response->getProcessId();
+        $data[$processId] = $request->getData();
+        $requestModel
+            ->setCurrentStep($requestModel->getCurrentFlow(), $processId)
+            ->setProcessResponse($processId, $response->getProcessResponse(), $response->isSucceed())
+            ->setData($data)
+            ->incAttempts();
+        if (!$response->isSucceed()) {
+            $requestModel->setStatus(EventData::STATUS_RETRY);
+        }
+
+        $requestRepository->save($requestModel);
+
+        return $requestModel;
     }
+
+    //<editor-fold desc="Getters and setters">
+
+    /**
+     * @return Filter
+     */
+    public function getFilter(): Filter
+    {
+        return $this->filter;
+    }
+
+    /**
+     * @param Filter $filter
+     *
+     * @return $this
+     */
+    public function setFilter(Filter $filter): self
+    {
+        $this->filter = $filter;
+
+        return $this;
+    }
+
+    /**
+     * @return FieldMapper
+     */
+    public function getMapper(): FieldMapper
+    {
+        return $this->mapper;
+    }
+
+    /**
+     * @param FieldMapper $mapper
+     *
+     * @return $this
+     */
+    public function setMapper(FieldMapper $mapper): self
+    {
+        $this->mapper = $mapper;
+
+        return $this;
+    }
+    //</editor-fold>
 }
