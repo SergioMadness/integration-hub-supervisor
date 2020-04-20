@@ -2,6 +2,7 @@
 
 use professionalweb\IntegrationHub\IntegrationHubCommon\Events\NewRequest;
 use professionalweb\IntegrationHub\Supervisor\Interfaces\Services\Supervisor;
+use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\EventData;
 use professionalweb\IntegrationHub\IntegrationHubCommon\Events\EventToSupervisor;
 
 class RequestReturnedListener
@@ -23,13 +24,12 @@ class RequestReturnedListener
      */
     public function handle(EventToSupervisor $event): void
     {
-        event(
-            new NewRequest(
-                $this->getSupervisor()->processResponse(
-                    $event->getProcessResponse()
-                )
-            )
+        $request = $this->getSupervisor()->processResponse(
+            $event->getProcessResponse()
         );
+        if (in_array($request->getStatus(), [EventData::STATUS_NEW, EventData::STATUS_QUEUE], true)) {
+            event(new NewRequest($request));
+        }
     }
 
     /**
