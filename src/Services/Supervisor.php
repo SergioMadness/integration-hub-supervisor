@@ -112,7 +112,11 @@ class Supervisor implements ISupervisor
             ->setData($data)
             ->incAttempts();
         if (!$response->isSucceed()) {
-            $requestModel->setStatus(EventData::STATUS_RETRY);
+            if ($requestModel->getAttemptQty() > 6) {
+                $requestModel->stopPropagation();
+            } else {
+                $requestModel->setStatus(EventData::STATUS_RETRY);
+            }
         } else {
             $requestModel->move();
         }
