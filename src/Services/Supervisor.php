@@ -82,9 +82,6 @@ class Supervisor implements ISupervisor
         } else {
             $request->setStatus(EventData::STATUS_SUCCESS);
         }
-        if (empty($currentStep)) {
-            $currentStep = $nextStep->getId();
-        }
 
         $this->getRequestRepository()->save(
             $request->setCurrentStep($flow->id, $currentStep)->setNextStep($flow->id, $nextStep === null ? '' : $nextStep->getId())
@@ -109,7 +106,7 @@ class Supervisor implements ISupervisor
 
         $data = $requestModel->getData();
         $processId = $response->getProcessId();
-        $data[$requestModel->getCurrentStep()] = $request->getData();
+        $data[$requestModel->getNextStep()] = $request->getData();
         $requestModel
             ->setProcessResponse($processId, $response->getProcessResponse(), $response->isSucceed())
             ->setData($data)
