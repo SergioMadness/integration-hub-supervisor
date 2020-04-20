@@ -69,15 +69,16 @@ class Supervisor implements ISupervisor
         $processOptions = null;
         $currentStep = $request->getCurrentStep();
         $nextStep = null;
-        if ($flow->isConditional($currentStep)) {
-            $nextStep = array_first($this->getFilter()->filter($flow->getCondition($currentStep), $request->getData()));
+        if (!empty($currentStep) && $flow->isConditional($currentStep)) {
+            $nextStepId = array_first($this->getFilter()->filter($flow->getCondition($currentStep), $request->getData()));
+            $nextStep = $flow->getNode($nextStepId);
         } else {
             $nextStep = $flow->getNext($currentStep);
         }
 
         if ($nextStep !== null) {
             $request->setStatus(EventData::STATUS_QUEUE);
-            $processOptions = $this->getProcessOptionsRepository()->model($nextStep);
+            $processOptions = $this->getProcessOptionsRepository()->model($nextStep->getSubsystemId());
         } else {
             $request->setStatus(EventData::STATUS_SUCCESS);
         }
