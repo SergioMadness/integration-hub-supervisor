@@ -84,7 +84,7 @@ class Supervisor implements ISupervisor
         }
 
         $this->getRequestRepository()->save(
-            $request->setCurrentStep($flow->id, $currentStep)
+            $request->setCurrentStep($flow->id, $currentStep)->setNextStep($flow->id, $nextStep === null ? '' : $nextStep->getId())
         );
 
         return $processOptions;
@@ -108,12 +108,13 @@ class Supervisor implements ISupervisor
         $processId = $response->getProcessId();
         $data[$processId] = $request->getData();
         $requestModel
-            ->setCurrentStep($requestModel->getCurrentFlow(), $processId)
             ->setProcessResponse($processId, $response->getProcessResponse(), $response->isSucceed())
             ->setData($data)
             ->incAttempts();
         if (!$response->isSucceed()) {
             $requestModel->setStatus(EventData::STATUS_RETRY);
+        } else {
+            $requestModel->move();
         }
 
         $requestRepository->save($requestModel);
