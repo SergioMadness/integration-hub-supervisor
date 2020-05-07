@@ -71,7 +71,7 @@ class Supervisor implements ISupervisor
         $nextStep = null;
         if (!empty($currentStep) && $flow->isConditional($currentStep)) {
             $nextStepId = array_first($this->getFilter()->filter($flow->getCondition($currentStep), $request->getData()));
-            $nextStep = $flow->getNode($nextStepId);
+            $nextStep = $nextStepId !== null ? $flow->getNode($nextStepId) : null;
         } else {
             $nextStep = $flow->getNext($currentStep);
         }
