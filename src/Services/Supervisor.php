@@ -109,17 +109,16 @@ class Supervisor implements ISupervisor
         $data[$requestModel->getNextStep()] = $request->getData();
         $requestModel
             ->setProcessResponse($processId, $response->getProcessResponse(), $response->isSucceed())
-            ->setData($data)
-            ->incAttempts();
+            ->setData($data);
         if (!$response->isSucceed()) {
-            $requestModel->stopPropagation();
+            $requestModel->incAttempts()->stopPropagation();
             if ($requestModel->getAttemptQty() > 6) {
-                $request->setStatus(EventData::STATUS_FAILED);
+                $requestModel->setStatus(EventData::STATUS_FAILED);
             } else {
                 $requestModel->setStatus(EventData::STATUS_RETRY);
             }
         } else {
-            $requestModel->move();
+            $requestModel->dropAttempts()->move();
         }
 
         $requestRepository->save($requestModel);
