@@ -75,7 +75,6 @@ class Supervisor implements ISupervisor
         } else {
             $nextStep = $flow->getNext($currentStep);
         }
-
         if ($nextStep !== null) {
             $request->setStatus(EventData::STATUS_QUEUE);
             $processOptions = $this->getProcessOptionsRepository()->model($nextStep->getSubsystemId());

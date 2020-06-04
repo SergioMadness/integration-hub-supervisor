@@ -82,10 +82,12 @@ class Dispatcher implements IDispatcher
         try {
             $result = event(new EventToProcess($event, $processOptions));
         } catch (ArrayException $ex) {
+            \Log::error($ex);
             $succeed = false;
             $response = $ex->getMessages();
             $result = [$event];
         } catch (\Exception $ex) {
+            \Log::error($ex);
             $succeed = false;
             $response = $ex->getMessage();
             $result = [$event];
