@@ -1,4 +1,4 @@
-<?php namespace professionalweb\IntegrationHub\Supervisor\Service;
+<?php namespace professionalweb\IntegrationHub\Supervisor\Services;
 
 use professionalweb\IntegrationHub\Supervisor\Interfaces\Services\Dispatcher;
 use professionalweb\IntegrationHub\Supervisor\Interfaces\Services\Supervisor;
@@ -8,7 +8,7 @@ use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\Services\Requ
 
 /**
  * Class EventProcessor
- * @package professionalweb\IntegrationHub\Supervisor\Service
+ * @package professionalweb\IntegrationHub\Supervisor\Services
  */
 class EventProcessor implements RequestProcessor
 {

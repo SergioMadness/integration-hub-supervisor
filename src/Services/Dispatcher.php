@@ -1,4 +1,4 @@
-<?php namespace professionalweb\IntegrationHub\Supervisor\Service;
+<?php namespace professionalweb\IntegrationHub\Supervisor\Services;
 
 use Illuminate\Support\Arr;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -14,12 +14,12 @@ use professionalweb\IntegrationHub\IntegrationHubCommon\Jobs\EventToProcess as E
 /**
  * Service that send event data to next step.
  * Through event or queue
- * @package professionalweb\IntegrationHub\Supervisor\Service
+ * @package professionalweb\IntegrationHub\Supervisor\Services
  */
 class Dispatcher implements IDispatcher
 {
     use DispatchesJobs {
-        dispatch as protected dispatchToQueue;
+        DispatchesJobs::dispatch as protected dispatchToQueue;
     }
 
     /**

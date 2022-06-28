@@ -1,4 +1,4 @@
-<?php namespace professionalweb\IntegrationHub\Supervisor\Service;
+<?php namespace professionalweb\IntegrationHub\Supervisor\Services;
 
 use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\EventData;
 use professionalweb\IntegrationHub\IntegrationHubCommon\Traits\UseFlowRepository;
@@ -16,7 +16,7 @@ use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\Repositories\
 
 /**
  * Service that resolve next step of processing
- * @package professionalweb\IntegrationHub\Supervisor\Service
+ * @package professionalweb\IntegrationHub\Supervisor\Services
  */
 class Supervisor implements ISupervisor
 {
