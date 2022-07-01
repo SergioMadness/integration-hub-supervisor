@@ -8,7 +8,7 @@ class NewRequestListener
     /**
      * @var RequestProcessor
      */
-    private $requestProcessor;
+    private RequestProcessor $requestProcessor;
 
     public function __construct(RequestProcessor $requestProcessor)
     {

@@ -1,9 +1,9 @@
 <?php namespace professionalweb\IntegrationHub\Supervisor\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use professionalweb\IntegrationHub\Supervisor\Service\Supervisor;
-use professionalweb\IntegrationHub\Supervisor\Service\Dispatcher;
-use professionalweb\IntegrationHub\Supervisor\Service\EventProcessor;
+use professionalweb\IntegrationHub\Supervisor\Services\Supervisor;
+use professionalweb\IntegrationHub\Supervisor\Services\Dispatcher;
+use professionalweb\IntegrationHub\Supervisor\Services\EventProcessor;
 use professionalweb\IntegrationHub\Supervisor\Interfaces\Services\Supervisor as ISupervisor;
 use professionalweb\IntegrationHub\Supervisor\Interfaces\Services\Dispatcher as IDispatcher;
 use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\Services\RequestProcessor;

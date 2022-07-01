@@ -10,7 +10,7 @@ class RequestReturnedListener
     /**
      * @var Supervisor
      */
-    private $supervisor;
+    private Supervisor $supervisor;
 
     public function __construct(Supervisor $supervisor)
     {
