@@ -1,4 +1,8 @@
-<?php namespace professionalweb\IntegrationHub\Supervisor\Services;
+<?php
+
+declare(strict_types=1);
+
+namespace professionalweb\IntegrationHub\Supervisor\Services;
 
 use professionalweb\IntegrationHub\Supervisor\Interfaces\Services\Dispatcher;
 use professionalweb\IntegrationHub\Supervisor\Interfaces\Services\Supervisor;
@@ -54,26 +58,6 @@ class EventProcessor implements RequestProcessor
     }
 
     /**
-     * @return Dispatcher
-     */
-    public function getDispatcher(): Dispatcher
-    {
-        return $this->dispatcher;
-    }
-
-    /**
-     * @param Dispatcher $dispatcher
-     *
-     * @return EventProcessor
-     */
-    public function setDispatcher(Dispatcher $dispatcher): self
-    {
-        $this->dispatcher = $dispatcher;
-
-        return $this;
-    }
-
-    /**
      * @return Supervisor
      */
     public function getSupervisor(): Supervisor
@@ -109,6 +93,26 @@ class EventProcessor implements RequestProcessor
     public function setFieldMapper(FieldMapper $fieldMapper): self
     {
         $this->fieldMapper = $fieldMapper;
+
+        return $this;
+    }
+
+    /**
+     * @return Dispatcher
+     */
+    public function getDispatcher(): Dispatcher
+    {
+        return $this->dispatcher;
+    }
+
+    /**
+     * @param Dispatcher $dispatcher
+     *
+     * @return EventProcessor
+     */
+    public function setDispatcher(Dispatcher $dispatcher): self
+    {
+        $this->dispatcher = $dispatcher;
 
         return $this;
     }

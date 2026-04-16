@@ -13,8 +13,8 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
-    "php": ">=7.4",
-    "professionalweb/integration-hub-common": "dev-develop"
+    "php": ">=8.4",
+    "professionalweb/integration-hub-common": "dev-improvement/upgrade"
   },
   "require-dev": {
   },

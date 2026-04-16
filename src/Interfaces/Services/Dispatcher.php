@@ -1,4 +1,8 @@
-<?php namespace professionalweb\IntegrationHub\Supervisor\Interfaces\Services;
+<?php
+
+declare(strict_types=1);
+
+namespace professionalweb\IntegrationHub\Supervisor\Interfaces\Services;
 
 use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\EventData;
 use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\Models\ProcessOptions;
@@ -12,7 +16,7 @@ interface Dispatcher
     /**
      * Dispatch event
      *
-     * @param EventData      $event
+     * @param EventData $event
      * @param ProcessOptions $processOptions
      *
      * @return Dispatcher

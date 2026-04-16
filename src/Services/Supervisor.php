@@ -1,5 +1,10 @@
-<?php namespace professionalweb\IntegrationHub\Supervisor\Services;
+<?php
 
+declare(strict_types=1);
+
+namespace professionalweb\IntegrationHub\Supervisor\Services;
+
+use Exception;
 use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\EventData;
 use professionalweb\IntegrationHub\IntegrationHubCommon\Traits\UseFlowRepository;
 use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\ProcessResponse;
@@ -32,11 +37,11 @@ class Supervisor implements ISupervisor
      */
     private $mapper;
 
-    public function __construct(FlowRepository $flowRepository,
+    public function __construct(FlowRepository           $flowRepository,
                                 ProcessOptionsRepository $processOptionsRepository,
-                                RequestRepository $requestRepository,
-                                Filter $filter,
-                                FieldMapper $mapper)
+                                RequestRepository        $requestRepository,
+                                Filter                   $filter,
+                                FieldMapper              $mapper)
     {
         $this
             ->setFlowRepository($flowRepository)
@@ -52,7 +57,7 @@ class Supervisor implements ISupervisor
      * @param EventData $request
      *
      * @return null|ProcessOptions
-     * @throws \Exception
+     * @throws Exception
      */
     public function nextProcess(EventData $request): ?ProcessOptions
     {
@@ -90,6 +95,28 @@ class Supervisor implements ISupervisor
     }
 
     /**
+     * @return Filter
+     */
+    public function getFilter(): Filter
+    {
+        return $this->filter;
+    }
+
+    //<editor-fold desc="Getters and setters">
+
+    /**
+     * @param Filter $filter
+     *
+     * @return $this
+     */
+    public function setFilter(Filter $filter): self
+    {
+        $this->filter = $filter;
+
+        return $this;
+    }
+
+    /**
      * Update request status
      *
      * @param ProcessResponse $response
@@ -123,28 +150,6 @@ class Supervisor implements ISupervisor
         $requestRepository->save($requestModel);
 
         return $requestModel;
-    }
-
-    //<editor-fold desc="Getters and setters">
-
-    /**
-     * @return Filter
-     */
-    public function getFilter(): Filter
-    {
-        return $this->filter;
-    }
-
-    /**
-     * @param Filter $filter
-     *
-     * @return $this
-     */
-    public function setFilter(Filter $filter): self
-    {
-        $this->filter = $filter;
-
-        return $this;
     }
 
     /**

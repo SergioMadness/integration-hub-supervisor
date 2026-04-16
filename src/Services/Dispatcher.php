@@ -1,5 +1,11 @@
-<?php namespace professionalweb\IntegrationHub\Supervisor\Services;
+<?php
 
+declare(strict_types=1);
+
+namespace professionalweb\IntegrationHub\Supervisor\Services;
+
+use Log;
+use Exception;
 use Illuminate\Support\Arr;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\EventData;
@@ -25,7 +31,7 @@ class Dispatcher implements IDispatcher
     /**
      * Dispatch event
      *
-     * @param EventData      $event
+     * @param EventData $event
      * @param ProcessOptions $processOptions
      *
      * @return IDispatcher
@@ -46,20 +52,9 @@ class Dispatcher implements IDispatcher
     }
 
     /**
-     * Send event to processor through API
-     *
-     * @param EventData      $event
-     * @param ProcessOptions $processOptions
-     */
-    protected function byAPI(EventData $event, ProcessOptions $processOptions): void
-    {
-        // TODO: call api
-    }
-
-    /**
      * Add event to queue
      *
-     * @param EventData      $event
+     * @param EventData $event
      * @param ProcessOptions $processOptions
      */
     protected function toQueue(EventData $event, ProcessOptions $processOptions): void
@@ -70,9 +65,20 @@ class Dispatcher implements IDispatcher
     }
 
     /**
+     * Send event to processor through API
+     *
+     * @param EventData $event
+     * @param ProcessOptions $processOptions
+     */
+    protected function byAPI(EventData $event, ProcessOptions $processOptions): void
+    {
+        // TODO: call api
+    }
+
+    /**
      * Send event to local processor
      *
-     * @param EventData      $event
+     * @param EventData $event
      * @param ProcessOptions $processOptions
      */
     protected function sendEvent(EventData $event, ProcessOptions $processOptions): void
@@ -82,19 +88,19 @@ class Dispatcher implements IDispatcher
         try {
             $result = event(new EventToProcess($event, $processOptions));
         } catch (ArrayException $ex) {
-            \Log::error($ex);
+            Log::error($ex);
             $succeed = false;
             $response = $ex->getMessages();
             $result = [$event];
-        } catch (\Exception $ex) {
-            \Log::error($ex);
+        } catch (Exception $ex) {
+            Log::error($ex);
             $succeed = false;
             $response = $ex->getMessage();
             $result = [$event];
         }
         event(new EventToSupervisor(
             new ProcessResponse(
-                Arr::last(Arr::where($result, function ($item) {
+                Arr::last(Arr::where($result, static function ($item): bool {
                     return $item !== null;
                 })),
                 $processOptions->getId(),

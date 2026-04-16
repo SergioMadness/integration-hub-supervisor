@@ -1,4 +1,8 @@
-<?php namespace professionalweb\IntegrationHub\Supervisor\Listeners;
+<?php
+
+declare(strict_types=1);
+
+namespace professionalweb\IntegrationHub\Supervisor\Listeners;
 
 use professionalweb\IntegrationHub\IntegrationHubCommon\Events\NewRequest;
 use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\Services\RequestProcessor;

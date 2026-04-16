@@ -1,4 +1,8 @@
-<?php namespace professionalweb\IntegrationHub\Supervisor\Providers;
+<?php
+
+declare(strict_types=1);
+
+namespace professionalweb\IntegrationHub\Supervisor\Providers;
 
 use professionalweb\IntegrationHub\Supervisor\Listeners\NewRequestListener;
 use professionalweb\IntegrationHub\Supervisor\Listeners\RequestReturnedListener;
@@ -14,7 +18,7 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        NewRequest::class        => [
+        NewRequest::class => [
             NewRequestListener::class,
         ],
         EventToSupervisor::class => [
