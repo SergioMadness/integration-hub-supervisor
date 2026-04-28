@@ -54,8 +54,6 @@ class Supervisor implements ISupervisor
     /**
      * Add/update event
      *
-     * @param EventData $request
-     *
      * @return null|ProcessOptions
      * @throws Exception
      */
@@ -94,9 +92,6 @@ class Supervisor implements ISupervisor
         return $processOptions;
     }
 
-    /**
-     * @return Filter
-     */
     public function getFilter(): Filter
     {
         return $this->filter;
@@ -105,8 +100,6 @@ class Supervisor implements ISupervisor
     //<editor-fold desc="Getters and setters">
 
     /**
-     * @param Filter $filter
-     *
      * @return $this
      */
     public function setFilter(Filter $filter): self
@@ -118,10 +111,6 @@ class Supervisor implements ISupervisor
 
     /**
      * Update request status
-     *
-     * @param ProcessResponse $response
-     *
-     * @return EventData
      */
     public function processResponse(ProcessResponse $response): EventData
     {
@@ -152,17 +141,12 @@ class Supervisor implements ISupervisor
         return $requestModel;
     }
 
-    /**
-     * @return FieldMapper
-     */
     public function getMapper(): FieldMapper
     {
         return $this->mapper;
     }
 
     /**
-     * @param FieldMapper $mapper
-     *
      * @return $this
      */
     public function setMapper(FieldMapper $mapper): self

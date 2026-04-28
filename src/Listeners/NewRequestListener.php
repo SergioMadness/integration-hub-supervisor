@@ -9,9 +9,6 @@ use professionalweb\IntegrationHub\IntegrationHubCommon\Interfaces\Services\Requ
 
 class NewRequestListener
 {
-    /**
-     * @var RequestProcessor
-     */
     private RequestProcessor $requestProcessor;
 
     public function __construct(RequestProcessor $requestProcessor)
@@ -24,17 +21,12 @@ class NewRequestListener
         $this->getRequestProcessor()->event($event->request);
     }
 
-    /**
-     * @return RequestProcessor
-     */
     public function getRequestProcessor(): RequestProcessor
     {
         return $this->requestProcessor;
     }
 
     /**
-     * @param RequestProcessor $requestProcessor
-     *
      * @return $this
      */
     public function setRequestProcessor(RequestProcessor $requestProcessor): self

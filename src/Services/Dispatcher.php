@@ -30,11 +30,6 @@ class Dispatcher implements IDispatcher
 
     /**
      * Dispatch event
-     *
-     * @param EventData $event
-     * @param ProcessOptions $processOptions
-     *
-     * @return IDispatcher
      */
     public function dispatch(EventData $event, ProcessOptions $processOptions): IDispatcher
     {
@@ -53,9 +48,6 @@ class Dispatcher implements IDispatcher
 
     /**
      * Add event to queue
-     *
-     * @param EventData $event
-     * @param ProcessOptions $processOptions
      */
     protected function toQueue(EventData $event, ProcessOptions $processOptions): void
     {
@@ -66,9 +58,6 @@ class Dispatcher implements IDispatcher
 
     /**
      * Send event to processor through API
-     *
-     * @param EventData $event
-     * @param ProcessOptions $processOptions
      */
     protected function byAPI(EventData $event, ProcessOptions $processOptions): void
     {
@@ -77,9 +66,6 @@ class Dispatcher implements IDispatcher
 
     /**
      * Send event to local processor
-     *
-     * @param EventData $event
-     * @param ProcessOptions $processOptions
      */
     protected function sendEvent(EventData $event, ProcessOptions $processOptions): void
     {

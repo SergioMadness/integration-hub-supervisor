@@ -16,9 +16,6 @@ interface Dispatcher
     /**
      * Dispatch event
      *
-     * @param EventData $event
-     * @param ProcessOptions $processOptions
-     *
      * @return Dispatcher
      */
     public function dispatch(EventData $event, ProcessOptions $processOptions): self;

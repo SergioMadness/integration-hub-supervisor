@@ -38,10 +38,6 @@ class EventProcessor implements RequestProcessor
 
     /**
      * Process event
-     *
-     * @param EventData $event
-     *
-     * @return RequestProcessor
      */
     public function event(EventData $event): RequestProcessor
     {
@@ -57,17 +53,12 @@ class EventProcessor implements RequestProcessor
         return $this;
     }
 
-    /**
-     * @return Supervisor
-     */
     public function getSupervisor(): Supervisor
     {
         return $this->supervisor;
     }
 
     /**
-     * @param Supervisor $supervisor
-     *
      * @return EventProcessor
      */
     public function setSupervisor(Supervisor $supervisor): self
@@ -77,17 +68,12 @@ class EventProcessor implements RequestProcessor
         return $this;
     }
 
-    /**
-     * @return FieldMapper
-     */
     public function getFieldMapper(): FieldMapper
     {
         return $this->fieldMapper;
     }
 
     /**
-     * @param FieldMapper $fieldMapper
-     *
      * @return $this
      */
     public function setFieldMapper(FieldMapper $fieldMapper): self
@@ -97,17 +83,12 @@ class EventProcessor implements RequestProcessor
         return $this;
     }
 
-    /**
-     * @return Dispatcher
-     */
     public function getDispatcher(): Dispatcher
     {
         return $this->dispatcher;
     }
 
     /**
-     * @param Dispatcher $dispatcher
-     *
      * @return EventProcessor
      */
     public function setDispatcher(Dispatcher $dispatcher): self

@@ -11,9 +11,6 @@ use professionalweb\IntegrationHub\IntegrationHubCommon\Events\EventToSupervisor
 
 class RequestReturnedListener
 {
-    /**
-     * @var Supervisor
-     */
     private Supervisor $supervisor;
 
     public function __construct(Supervisor $supervisor)
@@ -23,8 +20,6 @@ class RequestReturnedListener
 
     /**
      * Update event status end send it further
-     *
-     * @param EventToSupervisor $event
      */
     public function handle(EventToSupervisor $event): void
     {
@@ -36,17 +31,12 @@ class RequestReturnedListener
         }
     }
 
-    /**
-     * @return Supervisor
-     */
     public function getSupervisor(): Supervisor
     {
         return $this->supervisor;
     }
 
     /**
-     * @param Supervisor $supervisor
-     *
      * @return $this
      */
     public function setSupervisor(Supervisor $supervisor): self
