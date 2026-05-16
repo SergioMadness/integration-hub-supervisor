@@ -1,4 +1,8 @@
-<?php namespace professionalweb\IntegrationHub\Supervisor\Providers;
+<?php
+
+declare(strict_types=1);
+
+namespace professionalweb\IntegrationHub\Supervisor\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use professionalweb\IntegrationHub\Supervisor\Services\Supervisor;

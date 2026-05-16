@@ -1,4 +1,8 @@
-<?php namespace professionalweb\IntegrationHub\Supervisor\Services;
+<?php
+
+declare(strict_types=1);
+
+namespace professionalweb\IntegrationHub\Supervisor\Services;
 
 use professionalweb\IntegrationHub\Supervisor\Interfaces\Services\Dispatcher;
 use professionalweb\IntegrationHub\Supervisor\Interfaces\Services\Supervisor;
@@ -34,10 +38,6 @@ class EventProcessor implements RequestProcessor
 
     /**
      * Process event
-     *
-     * @param EventData $event
-     *
-     * @return RequestProcessor
      */
     public function event(EventData $event): RequestProcessor
     {
@@ -53,37 +53,12 @@ class EventProcessor implements RequestProcessor
         return $this;
     }
 
-    /**
-     * @return Dispatcher
-     */
-    public function getDispatcher(): Dispatcher
-    {
-        return $this->dispatcher;
-    }
-
-    /**
-     * @param Dispatcher $dispatcher
-     *
-     * @return EventProcessor
-     */
-    public function setDispatcher(Dispatcher $dispatcher): self
-    {
-        $this->dispatcher = $dispatcher;
-
-        return $this;
-    }
-
-    /**
-     * @return Supervisor
-     */
     public function getSupervisor(): Supervisor
     {
         return $this->supervisor;
     }
 
     /**
-     * @param Supervisor $supervisor
-     *
      * @return EventProcessor
      */
     public function setSupervisor(Supervisor $supervisor): self
@@ -93,22 +68,32 @@ class EventProcessor implements RequestProcessor
         return $this;
     }
 
-    /**
-     * @return FieldMapper
-     */
     public function getFieldMapper(): FieldMapper
     {
         return $this->fieldMapper;
     }
 
     /**
-     * @param FieldMapper $fieldMapper
-     *
      * @return $this
      */
     public function setFieldMapper(FieldMapper $fieldMapper): self
     {
         $this->fieldMapper = $fieldMapper;
+
+        return $this;
+    }
+
+    public function getDispatcher(): Dispatcher
+    {
+        return $this->dispatcher;
+    }
+
+    /**
+     * @return EventProcessor
+     */
+    public function setDispatcher(Dispatcher $dispatcher): self
+    {
+        $this->dispatcher = $dispatcher;
 
         return $this;
     }
