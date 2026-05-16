@@ -14,7 +14,7 @@
   "prefer-stable": true,
   "require": {
     "php": ">=8.4",
-    "professionalweb/integration-hub-common": "dev-improvement/upgrade"
+    "professionalweb/integration-hub-common": "dev-develop"
   },
   "require-dev": {
   },
